@@ -48,10 +48,10 @@ DATABASES = {
 WSGI_APPLICATION = 'vercel_app.wsgi.app'
 
 STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles' / 'static'
 STATICFILES_DIRS = [
-    BASE_DIR / 'quiz' / 'static',
+	BASE_DIR / 'static',
 ]
-STATIC_ROOT = BASE_DIR / 'static'
 
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
