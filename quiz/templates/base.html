@@ -7,6 +7,7 @@
   <title>{% block title %}KinoQuizAI{% endblock %}</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, minimal-ui, viewport-fit=cover, initial-scale=1.0">
+  <meta name="theme-color" content="#061012">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   {% tailwind_css %}
   <style>
@@ -29,7 +30,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="{% static 'icons/favicon-32x32.png' %}">
 <link rel="manifest" href="{% static 'icons/site.webmanifest' %}">
 
-<body class="bg-base-bg bg-image bg-cover bg-bottom min-safe-h-screen">
+<body class="bg-base-bg bg-image bg-cover bg-bottom min-safe-h-screen" style="padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right);">
 
 {% block nav %}
   {% include 'navigation.html' %}
