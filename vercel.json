@@ -13,19 +13,19 @@
 			"src": "build.sh",
 			"use": "@vercel/static-build",
 			"config": {
-				"distDir": "staticfiles"
+				"distDir": "static"
 			}
 		}
 	],
 	"routes": [
 		{
-			"src": "/quiz/static/(.*)",
-			"dest": "/quiz/static/$1"
+			"src": "/static/(.*)",
+			"dest": "/static/$1"
         },
 		{
 			"src": "/(.*)",
 			"dest": "KinoQuizAI/wsgi.py"
 		}
 	],
-	"outputDirectory": "staticfiles"
+	"outputDirectory": "static"
 }
