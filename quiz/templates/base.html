@@ -10,32 +10,21 @@
   <meta name="theme-color" content="#061012">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   {% tailwind_css %}
+  <script>
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  </script>
   <style>
     body {
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
     }
     #home-container {
-      min-height: calc(100vh - env(safe-area-inset-top, 0) - env(safe-area-inset-bottom, 0) - 8rem);
+      min-height: calc(var(--vh, 1vh) * 100 - 8rem);
     }
     .min-safe-h-screen {
-      /* for ios safari 15.4+ */
-      min-height: 100dvh;
-      /* equivalent to 100dvh in major browsers */
-      min-height: calc(
-        100vh - env(safe-area-inset-bottom, 0) - env(safe-area-inset-top, 0)
-      );
+      min-height: calc(var(--vh, 1vh) * 100);
     }
-    @supports (-webkit-touch-callout: none) {
-      .min-safe-h-screen {
-        /* for ios safari 15, safe-area-inset-bottom is 0, so a special fix apply here */
-        min-height: -webkit-fill-available;
-      }
-      #home-container {
-        min-height: calc(-webkit-fill-available - 8rem);
-      }
-    }
-
   </style>
 </head>
 
