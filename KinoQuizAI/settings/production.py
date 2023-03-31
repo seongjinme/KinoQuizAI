@@ -47,6 +47,12 @@ DATABASES = {
 
 WSGI_APPLICATION = 'vercel_app.wsgi.app'
 
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+    '/var/www/static/',
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles', 'static')
+
 SECURE_SSL_REDIRECT = True
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
