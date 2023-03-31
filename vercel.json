@@ -26,6 +26,5 @@
 			"src": "/(.*)",
 			"dest": "KinoQuizAI/wsgi.py"
 		}
-	],
-	"outputDirectory": "static"
+	]
 }
