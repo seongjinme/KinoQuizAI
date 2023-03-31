@@ -47,6 +47,7 @@ DATABASES = {
 
 WSGI_APPLICATION = 'vercel_app.wsgi.app'
 
+STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'quiz' / 'static',
 ]
