@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Register - KinoQuizAI{% endblock %}
+
+{% block body %}
+  <div id="login-container" class="flex items-center justify-center py-12 h-3/4 px-8 sm:px-6 lg:px-10">
+
+    <div class="w-[28rem] space-y-4">
+      {% if message %}
+        <div class="bg-rose-100 px-9 py-4 border-2 border-rose-500 drop-shadow-lg rounded-lg">
+          <p class="text-center text-sm text-rose-600">
+            {{ message }}
+          </p>
+        </div>
+      {% endif %}
+
+      <div class="bg-neutral-100 px-9 py-12 drop-shadow-lg rounded-lg">
+        <h2 class="text-center text-3xl font-bold tracking-tight text-gray-900">
+          Register your account
+        </h2>
+        <form class="mt-8 space-y-6 text-center" method="post" action="{% url 'kinoquizai:register' %}">
+          {% csrf_token %}
+          <div class="-space-y-px rounded-md drop-shadow-sm">
+            <label class="sr-only" for="username">Username</label>
+            <input autofocus class="relative block w-full rounded-t-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:leading-6" type="text" id="username" name="username" placeholder="Username" maxlength="16" autocomplete="off">
+            <label class="sr-only" for="password">Password</label>
+            <input class="relative block w-full border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:leading-6" type="password" id="password" name="password" placeholder="Password" autocomplete="off">
+            <label class="sr-only" for="confirmation">Confirm Password</label>
+            <input class="relative block w-full rounded-b-md border-0 py-2.5 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:z-10 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:leading-6" type="password" id="confirmation" name="confirmation" placeholder="Confirm Password" autocomplete="off">
+          </div>
+          <button type="submit" class="group relative flex w-full justify-center rounded-md py-2.5 px-3 font-bold text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:scale-105 focus:scale-105 drop-shadow-sm ease-in-out duration-300">Register</button>
+          <p>Already have an account? <a href="{% url 'kinoquizai:login' %}" class="text-blue-500 hover:text-blue-400 focus:text-blue-400">Log in here.</a></p>
+        </form>
+      </div>
+
+    </div>
+
+{% endblock %}

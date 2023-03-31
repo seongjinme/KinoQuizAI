@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Leaderboard - KinoQuizAI{% endblock %}
+
+{% block body %}
+  <div id="leaderboard-container" class="flex items-center justify-center py-8 sm:py-12 px-6">
+    <div class="w-full max-w-lg space-y-6 sm:space-y-8">
+
+      {% if error or message %}
+      <div class="bg-rose-100 p-6 sm:p-8 border border-rose-600 drop-shadow-lg rounded-lg mb-5">
+        <p class="text-center text-sm text-rose-600">
+          {{ error }}
+          {{ message }}
+        </p>
+      </div>
+      {% endif %}
+
+      <div id="quiz-card" class="bg-neutral-100 space-y-6 sm:space-y-8 p-6 sm:p-8 drop-shadow-lg rounded-lg">
+        <h2 class="text-center text-3xl font-bold tracking-tight text-gray-900">
+          Leaderboard
+        </h2>
+
+        <div id="leaderboard-description">
+          <p class="text-sm sm:text-base">Here are top 10 users who have aced the quizzes and earned the most points. Challenge them and climb to the top!</p>
+        </div>
+
+        {% if user_rank %}
+        <div id="leaderboard-user-status">
+          <p class="text-sm text-slate-400 mb-2">Your place with highest record:</p>
+          <div id="leaderboard-user-place" class="p-3 sm:p-4 w-full h-full bg-blue-50 border-2 border-blue-400 text-blue-600 rounded-md drop-shadow-sm">
+            <div class="flex items-center h-12 justify-between">
+              <div class="w-5/6">
+                <div class="inline-block min-w-[1.25rem] sm:min-w-[1.75rem] text-lg text-blue-600 tracking-tighter sm:text-2xl font-bold align-middle">{{ user_rank }}</div>
+                <div class="inline-block align-middle ml-2 sm:ml-3">
+                  <p class="text-base sm:text-lg text-blue-600 font-semibold">{{ user.username }}</p>
+                  <p class="text-[0.65rem] font-normal text-slate-400 tracking-tight sm:tracking-normal">Updated: {{ user.highest_record_at|date:'Y-m-d' }} {{ user.highest_record_at|time:'P' }}</p>
+                </div>
+              </div>
+              <div class="w-1/6 text-right text-blue-600 text-sm tracking-tighter sm:tracking-normal">
+                <span class="text-lg font-bold sm:text-2xl">{{ user.highest_record }}</span> pts
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <div id="leaderboard-top-10">
+          <p class="text-sm text-slate-400 mb-2">Top users in KinoQuizAI:</p>
+          <div id="leaderboard-top-10-list" class="max-w-md p-4 space-y-4 bg-neutral-50 border border-slate-300 divide-y divide-slate-300 rounded-md drop-shadow-sm">
+          {% if top_10_users %}
+          {% for top_10_user in top_10_users %}
+
+            {% if forloop.first %}
+            <div class="flex items-center h-12 justify-between">
+              <div class="w-5/6">
+                <div class="inline-block min-w-[1.25rem] sm:min-w-[1.75rem] text-lg text-slate-600 tracking-tighter sm:text-2xl font-bold align-middle">{{ top_10_user.rank }}</div>
+                <div class="inline-block align-middle ml-2 sm:ml-3">
+                  <p class="text-base sm:text-lg font-semibold text-slate-600">{{ top_10_user.username }} 🥇</p>
+                  <p class="text-[0.65rem] font-normal text-slate-400 tracking-tight sm:tracking-normal">Updated: {{ top_10_user.highest_record_at|date:'Y-m-d' }} {{ top_10_user.highest_record_at|time:'P' }}</p>
+                </div>
+              </div>
+              <div class="w-1/6 text-right text-slate-600 text-sm tracking-tighter sm:tracking-normal">
+                <span class="text-lg font-bold sm:text-2xl">{{ top_10_user.highest_record }}</span> pts
+              </div>
+            </div>
+            {% elif forloop.counter == 2 %}
+            <div class="flex items-center h-16 pt-4 justify-between">
+              <div class="w-5/6">
+                <div class="inline-block min-w-[1.25rem] sm:min-w-[1.75rem] text-lg text-slate-600 tracking-tighter sm:text-2xl font-bold align-middle">{{ top_10_user.rank }}</div>
+                <div class="inline-block align-middle ml-2 sm:ml-3">
+                  <p class="text-base sm:text-lg font-semibold text-slate-600">{{ top_10_user.username }} 🥈</p>
+                  <p class="text-[0.65rem] font-normal text-slate-400 tracking-tight sm:tracking-normal">Updated: {{ top_10_user.highest_record_at|date:'Y-m-d' }} {{ top_10_user.highest_record_at|time:'P' }}</p>
+                </div>
+              </div>
+              <div class="w-1/6 text-right text-slate-600 text-sm tracking-tighter sm:tracking-normal">
+                <span class="text-lg font-bold sm:text-2xl">{{ top_10_user.highest_record }}</span> pts
+              </div>
+            </div>
+            {% elif forloop.counter == 3 %}
+            <div class="flex items-center h-16 pt-4 justify-between">
+              <div class="w-5/6">
+                <div class="inline-block min-w-[1.25rem] sm:min-w-[1.75rem] text-lg text-slate-600 tracking-tighter sm:text-2xl font-bold align-middle">{{ top_10_user.rank }}</div>
+                <div class="inline-block align-middle ml-2 sm:ml-3">
+                  <p class="text-base sm:text-lg font-semibold text-slate-600">{{ top_10_user.username }} 🥉</p>
+                  <p class="text-[0.65rem] font-normal text-slate-400 tracking-tight sm:tracking-normal">Updated: {{ top_10_user.highest_record_at|date:'Y-m-d' }} {{ top_10_user.highest_record_at|time:'P' }}</p>
+                </div>
+              </div>
+              <div class="w-1/6 text-right text-slate-600 text-sm tracking-tighter sm:tracking-normal">
+                <span class="text-lg font-bold sm:text-2xl">{{ top_10_user.highest_record }}</span> pts
+              </div>
+            </div>
+            {% else %}
+            <div class="flex items-center h-16 pt-4 justify-between">
+              <div class="w-5/6">
+                <div class="inline-block min-w-[1.25rem] sm:min-w-[1.75rem] text-lg text-slate-600 tracking-tighter sm:text-2xl font-bold align-middle">{{ top_10_user.rank }}</div>
+                <div class="inline-block align-middle ml-2 sm:ml-3">
+                  <p class="text-base sm:text-lg font-semibold text-slate-600">{{ top_10_user.username }}</p>
+                  <p class="text-[0.65rem] font-normal text-slate-400 tracking-tight sm:tracking-normal">Updated: {{ top_10_user.highest_record_at|date:'Y-m-d' }} {{ top_10_user.highest_record_at|time:'P' }}</p>
+                </div>
+              </div>
+              <div class="w-1/6 text-right text-slate-600 text-sm tracking-tighter sm:tracking-normal">
+                <span class="text-lg font-bold sm:text-2xl">{{ top_10_user.highest_record }}</span> pts
+              </div>
+            </div>
+            {% endif %}
+          {% endfor %}
+          {% endif %}
+          </div>
+        </div>
+
+        <div class="text-center h-full">
+          <a type="button" id="back-to-main-button"
+            class="block rounded-md py-3 px-4 text-white font-semibold bg-gradient-to-r from-teal-500 to-blue-500 hover:scale-105 focus:scale-105 drop-shadow-sm ease-in-out duration-300"
+            href="/">
+            Back to Home
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+{% endblock %}

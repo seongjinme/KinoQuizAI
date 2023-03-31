@@ -1,0 +1,21 @@
+<nav class="bg-base-bg">
+  <div class="mx-auto max-w-6xl px-3">
+    <div class="flex h-14 items-center justify-between">
+      <div class="flex flex-1 items-center">
+        <div class="flex flex-shrink-0 items-center">
+          <a class="text-2xl font-bold rounded-md px-3 py-1 hover:hover:bg-slate-50/10" href="{% url 'kinoquizai:home' %}">
+            💫
+          </a>
+        </div>
+      </div>
+      <div class="flex-none">
+        <a href="{% url 'kinoquizai:leaderboard' %}" class="text-slate-50 hover:bg-slate-50/10 rounded-md px-2 py-2 text-sm font-light">Leaderboard</a>
+        {% if user.is_authenticated %}
+          <a href="{% url 'kinoquizai:logout' %}" class="text-slate-50 hover:bg-slate-50/10 rounded-md px-2 py-2 text-sm font-light">Logout</a>
+        {% else %}
+          <a href="{% url 'kinoquizai:login' %}" class="text-slate-50 hover:bg-slate-50/10 rounded-md px-2 py-2 text-sm font-light">Login</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>

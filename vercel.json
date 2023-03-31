@@ -1,0 +1,14 @@
+{
+	"builds": [
+		{
+			"src": "KinoQuizAI/wsgi.py",
+			"use": "@vercel/python"
+		}
+	],
+	"routes": [
+		{
+			"src": "/(.*)",
+			"dest": "KinoQuizAI/wsgi.py"
+		}
+	]
+}

@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Play Quiz - KinoQuizAI{% endblock %}
+
+{% block body %}
+  <div id="quiz-container" class="flex items-center justify-center py-8 sm:py-12 px-6">
+    <div class="w-full max-w-lg space-y-6 sm:space-y-8">
+
+      {% if error or message %}
+      <div class="bg-rose-100 p-6 sm:p-8 border border-rose-500 drop-shadow-lg rounded-lg mb-5">
+        <p class="text-center text-sm text-rose-600">
+          {{ error }}
+          {{ message }}
+        </p>
+      </div>
+      {% endif %}
+
+      <div id="quiz-card" class="bg-neutral-100 p-6 sm:p-8 space-y-6 sm:space-y-8 drop-shadow-lg rounded-lg">
+
+        <div>
+          <div id="quiz-status" class="flex items-center justify-between mb-2 text-slate-500 text-sm sm:text-base">
+            <p class="flex-auto font-semibold">Score: <span id="quiz-status-score">{{ user.score }}</span></p>
+            <span id="quiz-status-message" class="flex-none text-sm text-slate-400 animate-pulse">Fetching new quiz...</span>
+          </div>
+
+          <div id="quiz-question" class="text-base select-none text-slate-800 px-6 py-4 sm:text-lg sm:py-6 w-full h-full bg-neutral-50 border border-slate-300 rounded-t-md drop-shadow-sm">
+            <div class="animate-pulse flex space-x-4">
+              <div class="flex-1 space-y-5 py-1">
+                <div class="h-2 bg-slate-300 rounded"></div>
+                <div class="grid grid-cols-3 gap-4">
+                  <div class="h-2 bg-slate-200 rounded col-span-1"></div>
+                  <div class="h-2 bg-slate-200 rounded col-span-2"></div>
+                </div>
+                <div class="grid grid-cols-5">
+                  <div class="h-2 bg-slate-300 rounded col-span-3"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex w-full h-1.5 bg-slate-200 rounded-b-md overflow-hidden">
+            <div id="quiz-timeout-bar" class="flex flex-col justify-center overflow-hidden bg-blue-500" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+          </div>
+        </div>
+
+        <ul id="quiz-option-list" class="w-full select-none text-sm sm:text-base">
+          <li>
+            <input type="radio" id="quiz-option-A" name="quiz-option" value="A" class="hidden peer" disabled>
+            <label for="quiz-option-A" id="quiz-option-A-label" class="block px-6 py-3 mt-1.5 font-normal text-slate-500 bg-neutral-50 border border-slate-200 rounded-md cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-500 peer-checked:font-semibold hover:text-gray-600 hover:bg-gray-100">
+              <div class="animate-pulse flex space-x-4">
+                <div class="flex-1 space-y-5 py-1 grid grid-cols-5">
+                  <div class="h-2 bg-slate-200 rounded col-span-4"></div>
+                </div>
+              </div>
+            </label>
+          </li>
+          <li>
+            <input type="radio" id="quiz-option-B" name="quiz-option" value="B" class="hidden peer" disabled>
+            <label for="quiz-option-B" id="quiz-option-B-label" class="block px-6 py-3 mt-1.5 font-normal text-slate-500 bg-neutral-50 border border-slate-200 rounded-md cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-500 peer-checked:font-semibold hover:text-gray-600 hover:bg-gray-100">
+              <div class="animate-pulse flex space-x-4">
+                <div class="flex-1 space-y-5 py-1 grid grid-cols-5">
+                  <div class="h-2 bg-slate-200 rounded col-span-3"></div>
+                </div>
+              </div>
+            </label>
+          </li>
+          <li>
+            <input type="radio" id="quiz-option-C" name="quiz-option" value="C" class="hidden peer" disabled>
+            <label for="quiz-option-C" id="quiz-option-C-label" class="block px-6 py-3 mt-1.5 font-normal text-slate-500 bg-neutral-50 border border-slate-200 rounded-md cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-500 peer-checked:font-semibold hover:text-gray-600 hover:bg-gray-100">
+              <div class="animate-pulse flex space-x-4">
+                <div class="flex-1 space-y-5 py-1 grid grid-cols-5">
+                  <div class="h-2 bg-slate-200 rounded col-span-2"></div>
+                </div>
+              </div>
+            </label>
+          </li>
+          <li>
+            <input type="radio" id="quiz-option-D" name="quiz-option" value="D" class="hidden peer" disabled>
+            <label for="quiz-option-D" id="quiz-option-D-label" class="block px-6 py-3 mt-1.5 font-normal text-slate-500 bg-neutral-50 border border-slate-200 rounded-md cursor-pointer peer-checked:border-blue-500 peer-checked:text-blue-500 peer-checked:font-semibold over:text-gray-600 hover:bg-gray-100">
+              <div class="animate-pulse flex space-x-4">
+                <div class="flex-1 space-y-5 py-1 grid grid-cols-5">
+                  <div class="h-2 bg-slate-200 rounded col-span-3"></div>
+                </div>
+              </div>
+            </label>
+          </li>
+        </ul>
+
+        <div id="quiz-result-container" class="space-y-2">
+          <button type="button" id="quiz-choice-submit-button"
+            class="w-full rounded-md p-3 text-base sm:text-lg font-semibold text-white enabled:bg-gradient-to-r from-teal-500 to-blue-500 enabled:hover:scale-105 enabled:focus:scale-105 disabled:bg-slate-300 drop-shadow-sm ease-in-out duration-300"
+            data-toggle="modal" data-target="#quiz-result-modal"
+            disabled>
+            Submit
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'js/quiz.js' %}"></script>
+{% endblock %}
