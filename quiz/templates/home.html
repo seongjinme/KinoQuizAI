@@ -2,22 +2,20 @@
 {% load static %}
 
 {% block body %}
-  <div id="home-container" class="px-6 grid justify-center place-items-center" style="height: 85vh;">
-
+  <div id="home-container" class="relative flex px-6 py-10 justify-center items-center" style="min-height: calc(100vh - 8rem)">
     <div id="home-introduction" class="max-w-lg text-center">
-      <h1 class="transition-opacity text-white text-5xl font-bold drop-shadow-md">KinoQuizAI 💫️</h1>
-      <p class="text-slate-100 text-xl mt-7 font-light">KinoQuizAI is an ChatGPT powered movie quiz game that lets you compete with others while testing your movie knowledge.</p>
-      <p class="inline-block text-slate-50 text-md mt-6 font-medium rounded-lg px-3 py-2 bg-black/50">Think You Know Movies? Prove It!</p>
+      <h1 class="transition-opacity text-white text-4xl sm:text-5xl font-bold drop-shadow-md">KinoQuizAI 💫️</h1>
+      <p class="text-slate-100 text-base sm:text-xl mt-7 font-light">KinoQuizAI is an ChatGPT powered movie quiz game that lets you compete with others while testing your movie knowledge.</p>
+      <p class="inline-block text-slate-50 text-sm mt-6 font-medium rounded-lg px-3 py-2 bg-black/50">Think You Know Movies? Prove It!</p>
       <div class="mt-10">
         <a href="{% url 'kinoquizai:quiz' %}" class="inline-block text-white font-semibold px-7 py-4 rounded-lg bg-gradient-to-r from-teal-500 to-blue-500 hover:scale-110 focus:scale-110 drop-shadow-md ease-in-out duration-300">
           GET STARTED
         </a>
       </div>
     </div>
+  </div>
 
   {% include 'footer.html' %}
-
-  </div>
 
 {% endblock %}
 

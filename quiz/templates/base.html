@@ -1,7 +1,7 @@
 {% load static %}
 {% load static tailwind_tags %}
 <!DOCTYPE html>
-<html lang="en" class="min-h-full">
+<html lang="en" class="bg-base-bg" style="-moz-text-size-adjust: none; -webkit-text-size-adjust: none; text-size-adjust: none;">
 
 <head>
   <title>{% block title %}KinoQuizAI{% endblock %}</title>
@@ -9,13 +9,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   {% tailwind_css %}
+  <style>
+    .min-safe-h-screen {
+      /* equivalent to 100dvh in major browsers */
+      min-height: calc(
+        100vh - env(safe-area-inset-bottom, 0) - env(safe-area-inset-top, 0)
+      );
+    }
+    @supports (-webkit-touch-callout: none) {
+      .min-safe-h-screen {
+        /* for ios safari 15, safe-area-inset-bottom is 0, so a special fix apply here */
+        min-height: -webkit-fill-available;
+      }
+    }
+  </style>
 </head>
 
 <link rel="apple-touch-icon" sizes="180x180" href="{% static 'icons/apple-touch-icon.png' %}">
 <link rel="icon" type="image/png" sizes="32x32" href="{% static 'icons/favicon-32x32.png' %}">
 <link rel="manifest" href="{% static 'icons/site.webmanifest' %}">
 
-<body class="bg-base-bg bg-image bg-cover bg-bottom">
+<body class="bg-base-bg bg-image bg-cover bg-bottom min-safe-h-screen">
 
 {% block nav %}
   {% include 'navigation.html' %}
