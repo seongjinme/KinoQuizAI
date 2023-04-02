@@ -19,7 +19,7 @@
         <h2 class="text-center text-2xl sm:text-3xl font-bold tracking-tight text-gray-900">
           Log in to account
         </h2>
-        <form class="mt-4 sm:mt-8 space-y-6 text-center" method="post" action="{% url 'kinoquizai:login' %}">
+        <form class="mt-4 sm:mt-8 space-y-6 text-center" method="post" action="{% url 'quiz:login' %}">
           {% csrf_token %}
           <div class="-space-y-px rounded-md drop-shadow-sm">
             <label class="sr-only" for="username">Username</label>
@@ -29,7 +29,7 @@
             {% if next %}<input type="hidden" name="next" value="{{ next }}">{% endif %}
           </div>
           <button type="submit" class="group relative flex w-full justify-center rounded-md py-2.5 px-3 font-bold text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:scale-105 focus:scale-105 drop-shadow-sm ease-in-out duration-300">Log in</button>
-          <p>Don't have an account? <a href="{% url 'kinoquizai:register' %}" class="inline-block text-blue-500 hover:text-blue-400 focus:text-blue-400">Register here.</a></p>
+          <p>Don't have an account? <a href="{% url 'quiz:register' %}" class="inline-block text-blue-500 hover:text-blue-400 focus:text-blue-400">Register here.</a></p>
         </form>
       </div>
 
