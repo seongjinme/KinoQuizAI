@@ -395,40 +395,6 @@ function reset_quiz_content() {
 }
 
 
-function give_rating(id, rating) {
-
-    const csrftoken = get_cookie('csrftoken');
-    console.log('Sending rating to KinoQuizAI...');
-
-    fetch(`api/quiz/${id}/rating`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrftoken
-        },
-        mode: 'same-origin',
-        body: JSON.stringify({ rating })
-    })
-        .then(response => {
-            if (!response.ok) {
-                console.log('Fetch error occurred.');
-                throw new Error(response.statusText);
-            }
-            return response.json();
-        })
-        .then(result => {
-            if (content.error || content.message) {
-                console.log(content.error || content.message)
-            }
-            console.log('Process successfully completed.');
-        })
-        .catch(error => {
-            console.error(error);
-        });
-
-}
-
-
 function get_cookie(name) {
 
     let cookie_value = null;

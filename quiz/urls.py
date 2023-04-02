@@ -13,5 +13,4 @@ urlpatterns = [
 
     path('api/quiz/create', views.get_quiz, name='get_quiz'),
     path('api/quiz/<str:quiz_id>/result', views.get_result, name='get_result'),
-    path('api/quiz/<str:quiz_id>/rating', views.save_quiz_user_rating, name='save_quiz_user_rating')
 ]
