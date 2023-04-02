@@ -11,9 +11,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Set environment variables
 env = environ.Env()
-# env_file = os.path.join(BASE_DIR, '.env')
 env_file = os.path.join(BASE_DIR, 'KinoQuizAI', '.env')
-env.read_env(env_file)
 
 # Read a local .env file
 if os.path.isfile(env_file):

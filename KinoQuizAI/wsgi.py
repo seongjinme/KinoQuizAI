@@ -1,6 +1,4 @@
 import os
-import environ
-
 from django.core.wsgi import get_wsgi_application
 
 # Get the environment setting value
