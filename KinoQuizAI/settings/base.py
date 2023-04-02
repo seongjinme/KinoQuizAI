@@ -33,6 +33,7 @@ else:
 
 # Application definition
 SECRET_KEY = env('SECRET_KEY')
+ADMIN_URL = env('SECRET_ADMIN_URL')
 
 INSTALLED_APPS = [
     'tailwind',
