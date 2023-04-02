@@ -2,14 +2,15 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-from dotenv import load_dotenv
+import environ
 
-
-load_dotenv()
 
 def main():
+    # Get the environment setting value
+    environment = os.environ.get('ENVIRONMENT_SETTING', 'development')
+
     """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'KinoQuizAI.settings')
+    os.environ.setdefault('DJANGO_SETTINGS_MODULE', f'KinoQuizAI.settings.{environment}')
     try:
         from django.core.management import execute_from_command_line
     except ImportError as exc:
