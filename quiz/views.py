@@ -22,7 +22,7 @@ from secrets import choice, randbelow
 from supabase import create_client
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
-from .models import User, Quiz, Result, Prompt
+from .models import User, Quiz, Result, Prompt, Movie
 
 
 # Set environment variables
@@ -164,30 +164,46 @@ def leaderboard_view(request):
     })
 
 
-def get_prompt():
+def get_prompt_data():
 
-    # Get a prompt to make a request
+    # Get a movie title to make a question
+    movies = Movie.objects.all()
+    movies_count = movies.count()
+    if movies_count > 0:
+        movie = movies[randbelow(movies_count)]
+    else:
+        movie = set_prompt(type="movie")
+
+    # Get a text contain conditions to make a request
     try:
-        prompt_query = Prompt.objects.get(type="query").prompt
+        conditions = Prompt.objects.get(type="condition").prompt
     except Prompt.DoesNotExist:
-        prompt_query = set_prompt(type="query")
+        conditions = set_prompt(type="condition")
 
     # To produce the data in the desired format or topic, add a random sample quiz template as an example
-    prompt_samples = Prompt.objects.filter(type="sample")
-    if prompt_samples.count() > 0:
-        prompt_sample = prompt_samples[randbelow(prompt_samples.count())].prompt
+    samples = Prompt.objects.filter(type="sample")
+    if samples.count() > 0:
+        sample = samples[randbelow(samples.count())].prompt
     else:
-        prompt_sample = set_prompt(type="sample")
+        sample = set_prompt(type="sample")
 
     # If there was a problem retrieving prompts, return None
-    if not (prompt_query or prompt_sample):
+    if not (movie or conditions or sample):
+        print(f"There was a problem during retrieving prompt data:\n")
+        print(f"Title: {movie.title}\nConditions: {conditions}\nSample: {sample}")
         return None
 
     # Combine templates to generate the prompt to get a new quiz from Completions/Chat API
-    return prompt_query + prompt_sample + "\n\n[Question]"
+    result = {
+        "prompt": f"CREATE A SINGLE QUIZ WITH FOUR OPTIONS ABOUT MOVIE '{movie.title}'.\n" + conditions + "\n\n" + sample + "\n\n[Question]",
+        "movie_id": movie.id
+    }
+    return result
 
 
 def set_prompt(type):
+
+    print(f"Initializing '{type}' data to generate prompts...")
 
     # Connect to Supabase Storage
     url = env("SUPABASE_URL")
@@ -195,18 +211,35 @@ def set_prompt(type):
     client = create_client(url, key)
     bucket = client.storage.get_bucket(env("SUPABASE_BUCKET_PROMPTS"))
 
-    # Get the main query prompt
-    if type == "query":
+    # Get the movie title
+    if type == "movie":
 
-        prompt_query_file = bucket.download("quiz.txt")
-        prompt_query_content = prompt_query_file.decode("utf-8")
-        prompt_query = Prompt(
-            type="query",
-            prompt=prompt_query_content
+        prompt_movie_file = bucket.download("movies.txt")
+        prompt_movie_content = prompt_movie_file.decode("utf-8")
+
+        prompt_movie_titles = [title for title in prompt_movie_content.splitlines() if title]
+        for title in prompt_movie_titles:
+            prompt_movie = Movie(
+                title=title
+            )
+            prompt_movie.save()
+
+        prompt_movies = Movie.objects.all()
+        return prompt_movies[randbelow(prompt_movies.count())]
+
+
+    # Get the condition prompt
+    if type == "condition":
+
+        prompt_condition_file = bucket.download("conditions.txt")
+        prompt_condition_content = prompt_condition_file.decode("utf-8")
+        prompt_condition = Prompt(
+            type="condition",
+            prompt=prompt_condition_content
         )
-        prompt_query.save()
+        prompt_condition.save()
 
-        return prompt_query_content
+        return prompt_condition_content
 
     # Get the sample question prompts
     if type == "sample":
@@ -223,8 +256,7 @@ def set_prompt(type):
             prompt_sample.save()
 
         prompt_samples = Prompt.objects.filter(type="sample")
-        idx = randbelow(prompt_samples.count())
-        return prompt_samples[idx].prompt
+        return prompt_samples[randbelow(prompt_samples.count())].prompt
 
     return None
 
@@ -362,8 +394,8 @@ def get_quiz(request):
 
 
 def generate_quiz():
-    prompt = get_prompt()
-    content = get_response_from_gpt(prompt, chatapi=True)
+    data = get_prompt_data()
+    content = get_response_from_gpt(data["prompt"], chatapi=True)
 
     if not content:
         return None
@@ -377,7 +409,7 @@ def generate_quiz():
     if len(items[5]) > 1:
         items[5] = items[5][-1]
 
-    new_quiz_id = save_quiz_data(items)
+    new_quiz_id = save_quiz_data(data["movie_id"], items)
     if not new_quiz_id:
         return None
 
@@ -385,12 +417,20 @@ def generate_quiz():
     return Quiz.objects.get(id=new_quiz_id)
 
 
-def save_quiz_data(items):
+def save_quiz_data(movie_id, items):
+
+    try:
+        movie = Movie.objects.get(id=movie_id)
+    except Movie.DoesNotExist:
+        print(f"Error occurred during retrieving movie data id: {movie_id}")
+        return None
+
     quiz_id = create_quiz_id()
 
     try:
         quiz = Quiz(
             id=quiz_id,
+            movie=movie,
             question=items[0].strip(),
             option_a=items[1].strip(),
             option_b=items[2].strip(),
