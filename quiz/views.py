@@ -22,7 +22,7 @@ from secrets import choice, randbelow
 from supabase import create_client
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
-from .models import User, Quiz, Result, Prompt, Movie
+from .models import User, Quiz, Prompt, Movie
 
 
 # Set environment variables
@@ -124,8 +124,9 @@ def register_view(request):
 def quiz_view(request):
     user = get_object_or_404(User, id=request.user.id)
 
-    # Reset user's current score everytime when user starts playing
+    # Reset user's current score and life everytime when user starts playing
     user.score = 0
+    user.life = 3
     user.save()
 
     return render(request, "quiz.html", {
@@ -378,7 +379,6 @@ def get_quiz(request):
             return JsonResponse({
                 "error": "An error occurred during generating a quiz from ChatGPT. Please try again later.",
                 "message": "There was a temporary problem during getting a quiz. Please try again later.",
-                "retry_generate": True
             }, status=429)
 
     return JsonResponse({
@@ -497,6 +497,14 @@ def get_result(request, quiz_id):
     score = user.score
     highest_record = user.highest_record
 
+    # If user's choice was wrong, reduce user's life by 1
+    if not is_user_choice_correct:
+        user.life -= 1
+        user.save()
+
+    # Check whether user's remaining life
+    game_continue = True if user.life > 0 else False
+
     # Check if user's current score exceeds the user's highest record
     is_new_record = True if score > highest_record else False
 
@@ -514,7 +522,9 @@ def get_result(request, quiz_id):
             "imdb_url": quiz.imdb_url
         },
         "user_status": {
+            "life": user.life,
             "score": score,
+            "game_continue": game_continue,
             "highest_record": highest_record,
             "is_new_record": is_new_record
         }

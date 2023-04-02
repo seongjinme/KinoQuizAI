@@ -60,21 +60,22 @@ function fill_error_message() {
 
 function get_quiz_retry() {
 
-    const quiz_status_message = document.querySelector(`#quiz-status-message`);
     const quiz_question = document.querySelector(`#quiz-question`);
     const quiz_result_container = document.querySelector(`#quiz-result-container`);
 
-    quiz_status_message.textContent = 'Fetching new quiz...'
     quiz_question.innerHTML = `
         <div class="animate-pulse flex space-x-4">
             <div class="flex-1 space-y-5 py-1">
-                <div class="h-2 bg-slate-200 rounded"></div>
+                <div id="quiz-status-message" class="col-span-3 text-sm text-slate-400 animate-pulse">Fetching new quiz...</div>
+                <div class="h-2 bg-slate-300 rounded"></div>
                 <div class="grid grid-cols-3 gap-4">
-                    <div class="h-2 bg-slate-200 rounded col-span-2"></div>
                     <div class="h-2 bg-slate-200 rounded col-span-1"></div>
+                    <div class="h-2 bg-slate-200 rounded col-span-2"></div>
                 </div>
-                    <div class="h-2 bg-slate-200 rounded"></div>
+                <div class="grid grid-cols-5">
+                    <div class="h-2 bg-slate-300 rounded col-span-3"></div>
                 </div>
+            </div>
         </div>
     `;
 
@@ -93,7 +94,7 @@ function get_quiz_retry() {
 
 function fill_quiz_content(content) {
 
-    const quiz_status_message = document.querySelector(`#quiz-status-message`);
+//    const quiz_status_message = document.querySelector(`#quiz-status-message`);
     const quiz_question = document.querySelector(`#quiz-question`);
     const quiz_options = document.querySelectorAll(`ul#quiz-option-list > li > input`);
     const quiz_option_A_label = document.querySelector(`#quiz-option-A-label`);
@@ -103,7 +104,7 @@ function fill_quiz_content(content) {
     const quiz_choice_submit_button = document.querySelector(`#quiz-choice-submit-button`);
 
     // Clear the status message
-    quiz_status_message.textContent = '';
+    // quiz_status_message.textContent = '';
 
     // Fill the question
     quiz_question.innerHTML = content['quiz']['question'];
@@ -161,7 +162,7 @@ function start_quiz_timeout(quiz_id) {
 
 function submit_quiz_option_choice(quiz_id) {
 
-    const quiz_status_message = document.querySelector(`#quiz-status-message`);
+//    const quiz_status_message = document.querySelector(`#quiz-status-message`);
     const quiz_options = document.querySelectorAll(`ul#quiz-option-list > li > input`);
     const quiz_choice_submit_button = document.querySelector(`#quiz-choice-submit-button`);
 
@@ -173,7 +174,7 @@ function submit_quiz_option_choice(quiz_id) {
     const checked = document.querySelector(`input[name='quiz-option']:checked`);
     const choice = checked ? checked.value : null;
 
-    quiz_status_message.textContent = 'Submitting your choice...'
+//    quiz_status_message.textContent = 'Submitting your choice...'
     QUIZ_SUBMITTED = true;
 
     get_result(quiz_id, choice)
@@ -221,7 +222,7 @@ function get_result(quiz_id, choice) {
 
 function clear_quiz_content(answer) {
 
-    const quiz_status_message = document.querySelector(`#quiz-status-message`);
+//    const quiz_status_message = document.querySelector(`#quiz-status-message`);
     const quiz_options = document.querySelectorAll(`ul#quiz-option-list > li > input`);
     const quiz_choice_submit_button = document.querySelector(`#quiz-choice-submit-button`);
 
@@ -237,7 +238,7 @@ function clear_quiz_content(answer) {
         }
     }
 
-    quiz_status_message.textContent = '';
+//    quiz_status_message.textContent = '';
     quiz_choice_submit_button.remove();
 
 }
@@ -256,6 +257,16 @@ function fill_quiz_result(result) {
                 Great! The answer is (${result['quiz_result']['answer']})
             </div>
         `;
+    }
+    else {
+        quiz_result_div = `
+            <div id="quiz-result" class="bg-rose-100 p-3 text-sm sm:text-base font-semibold text-rose-600 text-center border border-rose-600 drop-shadow-sm rounded-md">
+                How unfortunate! The answer is (${result['quiz_result']['answer']})
+            </div>
+        `;
+    }
+
+    if (result['user_status']['game_continue']) {
         quiz_next_interface_div.innerHTML = `
             <button type="button" id="quiz-result-continue-button"
                 class="block rounded-md w-full py-3 px-5 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:scale-105 focus:scale-105 drop-shadow-sm ease-in-out duration-300"
@@ -265,11 +276,6 @@ function fill_quiz_result(result) {
         `;
     }
     else {
-        quiz_result_div = `
-            <div id="quiz-result" class="bg-rose-100 p-3 text-sm sm:text-base font-semibold text-rose-600 text-center border border-rose-600 drop-shadow-sm rounded-md">
-                How unfortunate! The answer is (${result['quiz_result']['answer']})
-            </div>
-        `;
         quiz_next_interface_div.innerHTML = `
             <a type="button" id="quiz-result-restart-button"
                 class="rounded-md py-3 px-4 text-sm sm:text-base font-semibold text-white bg-gradient-to-r from-teal-500 to-blue-500 hover:scale-105 focus:scale-105 drop-shadow-sm ease-in-out duration-300"
@@ -285,7 +291,47 @@ function fill_quiz_result(result) {
     }
 
     const quiz_status_score = document.querySelector(`#quiz-status-score`);
-    quiz_status_score.textContent = result['user_status']['score']
+    quiz_status_score.textContent = result['user_status']['score'];
+
+    const quiz_user_life = document.querySelector(`#quiz-user-life`);
+    if (result['user_status']['life'] === 3) {
+        quiz_user_life.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-rose-600" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-rose-600" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-rose-600" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg>
+        `;
+    }
+    else if (result['user_status']['life'] === 2) {
+        quiz_user_life.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-slate-300" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-rose-600" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-rose-600" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg>
+        `;
+    }
+    else if (result['user_status']['life'] === 1) {
+        quiz_user_life.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-slate-300" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-slate-300" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-rose-600" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+            </svg>
+        `;
+    }
+    else {
+        quiz_user_life.innerHTML = `
+            <p class="text-sm text-slate-400 animate-pulse">Game over...</p>
+        `;
+    }
 
     const quiz_explanation_div = `
         <div id="quiz-explanation" class="text-base select-none text-slate-500 px-6 py-4 sm:text-lg sm:py-6 w-full h-full bg-neutral-50 border border-slate-300 rounded-md drop-shadow-sm">
@@ -316,26 +362,25 @@ function continue_play_quiz() {
 
 function reset_quiz_content() {
 
-    const quiz_status_message = document.querySelector(`#quiz-status-message`);
     const quiz_question = document.querySelector(`#quiz-question`);
     const quiz_timeout_bar = document.querySelector(`#quiz-timeout-bar`);
     const quiz_option_list = document.querySelector(`ul#quiz-option-list`);
     const quiz_result_container = document.querySelector(`#quiz-result-container`);
     const quiz_next_interface_div = document.querySelector(`#quiz-next-interface-div`);
 
-    quiz_status_message.textContent = 'Fetching new quiz...'
     quiz_question.innerHTML = `
         <div class="animate-pulse flex space-x-4">
-          <div class="flex-1 space-y-5 py-1">
-            <div class="h-2 bg-slate-300 rounded"></div>
-            <div class="grid grid-cols-3 gap-4">
-              <div class="h-2 bg-slate-200 rounded col-span-1"></div>
-              <div class="h-2 bg-slate-200 rounded col-span-2"></div>
+            <div class="flex-1 space-y-5 py-1">
+                <div id="quiz-status-message" class="col-span-3 text-sm text-slate-400 animate-pulse">Fetching new quiz...</div>
+                <div class="h-2 bg-slate-300 rounded"></div>
+                <div class="grid grid-cols-3 gap-4">
+                    <div class="h-2 bg-slate-200 rounded col-span-1"></div>
+                    <div class="h-2 bg-slate-200 rounded col-span-2"></div>
+                </div>
+                <div class="grid grid-cols-5">
+                    <div class="h-2 bg-slate-300 rounded col-span-3"></div>
+                </div>
             </div>
-            <div class="grid grid-cols-5">
-              <div class="h-2 bg-slate-300 rounded col-span-3"></div>
-            </div>
-          </div>
         </div>
     `;
     quiz_timeout_bar.style.width = '0';

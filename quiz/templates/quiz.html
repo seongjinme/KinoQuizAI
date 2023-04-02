@@ -21,12 +21,21 @@
         <div>
           <div id="quiz-status" class="flex items-center justify-between mb-2 text-slate-500 text-sm sm:text-base">
             <p class="flex-auto font-semibold">Score: <span id="quiz-status-score">{{ user.score }}</span></p>
-            <span id="quiz-status-message" class="flex-none text-sm text-slate-400 animate-pulse">Fetching new quiz...</span>
+            <p id="quiz-user-life" class="flex-none text-base text-right space-x-[2px]">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-rose-600" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+              </svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-rose-600" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+              </svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="bi bi-heart-fill inline-block fill-rose-600" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314z"/>
+              </svg>
+            </p>
           </div>
 
           <div id="quiz-question" class="text-base select-none text-slate-800 px-6 py-4 sm:text-lg sm:py-6 w-full h-full bg-neutral-50 border border-slate-300 rounded-t-md drop-shadow-sm">
             <div class="animate-pulse flex space-x-4">
               <div class="flex-1 space-y-5 py-1">
+                <div id="quiz-status-message" class="col-span-3 text-sm text-slate-400 animate-pulse">Fetching new quiz...</div>
                 <div class="h-2 bg-slate-300 rounded"></div>
                 <div class="grid grid-cols-3 gap-4">
                   <div class="h-2 bg-slate-200 rounded col-span-1"></div>
