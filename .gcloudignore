@@ -1,0 +1,39 @@
+# .gcloudignore
+.gcloudignore
+
+# Ignore local environment files
+.env
+.venv
+envfile
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+/setup.cfg
+
+# Ignore .git and .gitignore file
+.git
+.gitignore
+
+# Python pycache:
+__pycache__/
+
+# Ignore collected static and media files
+mediafiles/
+staticfiles/
+
+# Ignore the local DB
+db.sqlite3
+
+# Ignore IDE files (PyCharm, VSCode, etc)
+.idea/
+
+# Django settings
+*.log
+*.pot
+*.pyc
+
+# Etcs
+.DS_Store
+node_modules/

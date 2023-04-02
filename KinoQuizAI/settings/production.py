@@ -1,17 +1,27 @@
-import os
+from urllib.parse import urlparse
 from .base import *
-from dotenv import load_dotenv
 
-
-# Initiate `load_dotenv` to read .env file
-load_dotenv()
 
 DEBUG = False
 
-ALLOWED_HOSTS = [
-    '127.0.0.1',
-    '.vercel.app',
-]
+# [START gaestd_py_django_csrf]
+# SECURITY WARNING: It's recommended that you use this when
+# running in production. The URL will be known once you first deploy
+# to App Engine. This code takes the URL and converts it to both these settings formats.
+APPENGINE_URL = env('APPENGINE_URL', default=None)
+if APPENGINE_URL:
+    # Ensure a scheme is present in the URL before it's processed.
+    if not urlparse(APPENGINE_URL).scheme:
+        APPENGINE_URL = f'https://{APPENGINE_URL}'
+
+    ALLOWED_HOSTS = [urlparse(APPENGINE_URL).netloc]
+    CSRF_TRUSTED_ORIGINS = [APPENGINE_URL]
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+else:
+    ALLOWED_HOSTS = ['*']
+# [END gaestd_py_django_csrf]
 
 INSTALLED_APPS = [
     'tailwind',
@@ -36,25 +46,20 @@ MIDDLEWARE = [
 
 DATABASES = {
     'default': {
-        'ENGINE': str(os.getenv('DB_ENGINE')),
-        'NAME': str(os.getenv('DB_NAME')),
-        'USER': str(os.getenv('DB_USER')),
-        'PASSWORD': str(os.getenv('DB_PASSWORD')),
-        'HOST': str(os.getenv('DB_HOST')),
-        'PORT': str(os.getenv('DB_PORT')),
+        'ENGINE': env('DB_ENGINE'),
+        'NAME': env('DB_NAME'),
+        'USER': env('DB_USER'),
+        'PASSWORD': env('DB_PASSWORD'),
+        'HOST': env('DB_HOST'),
+        'PORT': env('DB_PORT'),
     }
 }
 
-WSGI_APPLICATION = 'vercel_app.wsgi.app'
-
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles' / 'static'
 STATICFILES_DIRS = [
-	BASE_DIR / 'static',
+	BASE_DIR / 'quiz' / 'static',
 ]
 
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = []
-SECURE_BROWSER_XSS_FILTER = True
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'static'

@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
@@ -8,18 +9,43 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 
+import environ
+import io
 import json
 import openai
 import os
 import re
 import string
 
-from dotenv import load_dotenv
+from google.cloud import secretmanager
 from secrets import choice, randbelow
 from supabase import create_client
 from tenacity import retry, stop_after_attempt, wait_random_exponential
 
 from .models import User, Quiz, Result, Prompt
+
+
+# Set environment variables
+env = environ.Env(DEBUG=(bool, False))
+env_file = os.path.join(settings.BASE_DIR, 'KinoQuizAI', '.env')
+
+# Read a local .env file
+if os.path.isfile(env_file):
+    env.read_env(env_file)
+
+# Pull .env file from GCP Secret Manager
+elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
+    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
+    client = secretmanager.SecretManagerServiceClient()
+    settings_name = os.environ.get('SETTINGS_NAME', 'django_settings')
+    name = f'projects/{project_id}/secrets/{settings_name}/versions/latest'
+    payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
+
+    env.read_env(io.StringIO(payload))
+
+# Neither option is available, raise exception
+else:
+    raise Exception('No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.')
 
 
 def home_view(request):
@@ -40,7 +66,7 @@ def login_view(request):
             next_path = request.POST.get("next") or None
             if next_path:
                 return redirect(next_path)
-            return redirect("kinoquizai:home")
+            return redirect("quiz:home")
         else:
             return render(request, "login.html", {
                 "message": "Invalid username and/or password."
@@ -55,7 +81,7 @@ def login_view(request):
 
 def logout_view(request):
     if not request.user.is_authenticated:
-        return redirect("kinoquizai:home")
+        return redirect("quiz:home")
     logout(request)
     return redirect(request.path)
 
@@ -88,7 +114,7 @@ def register_view(request):
 
         # After creating new user, allow login to the app and redirect to home
         login(request, user)
-        return redirect("kinoquizai:home")
+        return redirect("quiz:home")
 
     else:
         return render(request, "register.html")
@@ -163,13 +189,11 @@ def get_prompt():
 
 def set_prompt(type):
 
-    load_dotenv()
-
     # Connect to Supabase Storage
-    url = os.environ.get("SUPABASE_URL")
-    key = os.environ.get("SUPABASE_ANON_KEY")
+    url = env("SUPABASE_URL")
+    key = env("SUPABASE_ANON_KEY")
     client = create_client(url, key)
-    bucket = client.storage.get_bucket(os.environ.get("SUPABASE_BUCKET_PROMPTS"))
+    bucket = client.storage.get_bucket(env("SUPABASE_BUCKET_PROMPTS"))
 
     # Get the main query prompt
     if type == "query":
@@ -212,9 +236,8 @@ def get_response_from_gpt(prompt, chatapi=True):
         print("There was a problem retrieving the prompt. Aborted the process.")
         return None
 
-    load_dotenv()
-    openai.organization = str(os.environ.get("OPENAI_ORGANIZATION"))
-    openai.api_key = str(os.environ.get("OPENAI_API_KEY"))
+    openai.organization = env("OPENAI_ORGANIZATION")
+    openai.api_key = env("OPENAI_API_KEY")
 
     # Preset the parameters for Completions/Chat API
     # To check descriptions for each parameter, visit https://platform.openai.com/docs/api-reference/completions

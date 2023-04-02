@@ -1,25 +1,40 @@
+import environ
+import io
 import os
+from google.cloud import secretmanager
 from pathlib import Path
-from dotenv import load_dotenv
-
-
-# Initiate `load_dotenv` to read .env file
-load_dotenv()
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+# BASE_DIR = Path(__file__).resolve().parent.parent.parent
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
+# Set environment variables
+env = environ.Env()
+# env_file = os.path.join(BASE_DIR, '.env')
+env_file = os.path.join(BASE_DIR, 'KinoQuizAI', '.env')
+env.read_env(env_file)
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
+# Read a local .env file
+if os.path.isfile(env_file):
+    env.read_env(env_file)
 
-SECRET_KEY = str(os.environ.get('SECRET_KEY'))
-DEBUG = False
-ALLOWED_HOSTS = []
+# Pull .env file from GCP Secret Manager
+elif os.environ.get('GOOGLE_CLOUD_PROJECT', None):
+    project_id = os.environ.get('GOOGLE_CLOUD_PROJECT')
+    client = secretmanager.SecretManagerServiceClient()
+    settings_name = os.environ.get('SETTINGS_NAME', 'django_settings')
+    name = f'projects/{project_id}/secrets/{settings_name}/versions/latest'
+    payload = client.access_secret_version(name=name).payload.data.decode('UTF-8')
 
+    env.read_env(io.StringIO(payload))
+
+# Neither option is available, raise exception
+else:
+    raise Exception('No local .env or GOOGLE_CLOUD_PROJECT detected. No secrets found.')
 
 # Application definition
+SECRET_KEY = env('SECRET_KEY')
 
 INSTALLED_APPS = [
     'tailwind',
@@ -44,8 +59,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'KinoQuizAI.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -63,7 +76,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'KinoQuizAI.wsgi.application'
-
+ROOT_URLCONF = "KinoQuizAI.urls"
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
