@@ -15,7 +15,7 @@ class QuizAdmin(admin.ModelAdmin):
 
 
 class ResultAdmin(admin.ModelAdmin):
-    list_display = ("id", "user", "quiz", "is_choice_correct", "created_at", "rating")
+    list_display = ("id", "user", "quiz", "is_choice_correct", "created_at", "feedback")
 
 
 class PromptAdmin(admin.ModelAdmin):

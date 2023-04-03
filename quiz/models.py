@@ -52,7 +52,7 @@ class Result(models.Model):
     quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE, related_name='user_results')
     is_choice_correct = models.BooleanField()
     created_at = models.DateTimeField(auto_now_add=True)
-    rating = models.IntegerField(default=0)
+    feedback = models.TextField(null=True, blank=False)
 
     class Meta:
         unique_together = ('user', 'quiz')

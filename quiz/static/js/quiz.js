@@ -94,7 +94,6 @@ function get_quiz_retry() {
 
 function fill_quiz_content(content) {
 
-//    const quiz_status_message = document.querySelector(`#quiz-status-message`);
     const quiz_question = document.querySelector(`#quiz-question`);
     const quiz_options = document.querySelectorAll(`ul#quiz-option-list > li > input`);
     const quiz_option_A_label = document.querySelector(`#quiz-option-A-label`);
@@ -103,19 +102,17 @@ function fill_quiz_content(content) {
     const quiz_option_D_label = document.querySelector(`#quiz-option-D-label`);
     const quiz_choice_submit_button = document.querySelector(`#quiz-choice-submit-button`);
 
-    // Clear the status message
-    // quiz_status_message.textContent = '';
-
     // Fill the question
     quiz_question.innerHTML = content['quiz']['question'];
 
     // Fill and enable the radio select buttons
-    quiz_option_A_label.textContent = content['quiz']['option_a'];
-    quiz_option_B_label.textContent = content['quiz']['option_b'];
-    quiz_option_C_label.textContent = content['quiz']['option_c'];
-    quiz_option_D_label.textContent = content['quiz']['option_d'];
+    quiz_option_A_label.textContent = `(A) ${content['quiz']['option_a']}`;
+    quiz_option_B_label.textContent = `(B) ${content['quiz']['option_b']}`;
+    quiz_option_C_label.textContent = `(C) ${content['quiz']['option_c']}`;
+    quiz_option_D_label.textContent = `(D) ${content['quiz']['option_d']}`;
 
     for (let i = 0; i < quiz_options.length; i++) {
+        quiz_options[i].value = content['quiz']['option_values'][i]
         quiz_options[i].disabled = false;
         quiz_options[i].checked = false;
     }
@@ -162,7 +159,6 @@ function start_quiz_timeout(quiz_id) {
 
 function submit_quiz_option_choice(quiz_id) {
 
-//    const quiz_status_message = document.querySelector(`#quiz-status-message`);
     const quiz_options = document.querySelectorAll(`ul#quiz-option-list > li > input`);
     const quiz_choice_submit_button = document.querySelector(`#quiz-choice-submit-button`);
 
@@ -174,7 +170,6 @@ function submit_quiz_option_choice(quiz_id) {
     const checked = document.querySelector(`input[name='quiz-option']:checked`);
     const choice = checked ? checked.value : null;
 
-//    quiz_status_message.textContent = 'Submitting your choice...'
     QUIZ_SUBMITTED = true;
 
     get_result(quiz_id, choice)
@@ -222,7 +217,6 @@ function get_result(quiz_id, choice) {
 
 function clear_quiz_content(answer) {
 
-//    const quiz_status_message = document.querySelector(`#quiz-status-message`);
     const quiz_options = document.querySelectorAll(`ul#quiz-option-list > li > input`);
     const quiz_choice_submit_button = document.querySelector(`#quiz-choice-submit-button`);
 
@@ -231,14 +225,13 @@ function clear_quiz_content(answer) {
             quiz_options[i].parentElement.remove();
         }
         else if (quiz_options[i].value === answer) {
-            quiz_options[i].parentElement.lastElementChild.className = 'block px-6 py-3 mt-1.5 font-semibold text-green-600 bg-neutral-50 border border-green-600 rounded-md cursor-pointer';
+            quiz_options[i].parentElement.lastElementChild.className = 'block px-6 py-3 mt-1.5 font-semibold text-green-600 bg-neutral-50 border border-green-600 rounded-md cursor-pointer answer';
         }
         else {
             quiz_options[i].parentElement.lastElementChild.className = 'block px-6 py-3 mt-1.5 font-medium text-rose-600 bg-neutral-50 border rounded-md cursor-pointer';
         }
     }
 
-//    quiz_status_message.textContent = '';
     quiz_choice_submit_button.remove();
 
 }
@@ -251,17 +244,19 @@ function fill_quiz_result(result) {
     quiz_next_interface_div.className = 'flex items-center justify-between';
     quiz_next_interface_div.id = 'quiz-next-interface-div';
 
+    const quiz_option_answer = document.querySelector('ul#quiz-option-list > li > label[class~="answer"]').textContent[1];
+
     if (result['quiz_result']['is_user_choice_correct']) {
         quiz_result_div = `
             <div id="quiz-result" class="bg-green-100 p-3 text-sm sm:text-base font-semibold text-green-600 text-center border border-green-600 drop-shadow-sm rounded-md">
-                Great! The answer is (${result['quiz_result']['answer']})
+                Great! The answer is (${quiz_option_answer}).
             </div>
         `;
     }
     else {
         quiz_result_div = `
             <div id="quiz-result" class="bg-rose-100 p-3 text-sm sm:text-base font-semibold text-rose-600 text-center border border-rose-600 drop-shadow-sm rounded-md">
-                How unfortunate! The answer is (${result['quiz_result']['answer']})
+                How unfortunate! The answer is (${quiz_option_answer}).
             </div>
         `;
     }

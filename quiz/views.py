@@ -381,14 +381,26 @@ def get_quiz(request):
                 "message": "There was a temporary problem during getting a quiz. Please try again later.",
             }, status=429)
 
+    # Shuffle the order of options to make user experiences more dynamic
+    quiz_options = [quiz.option_a, quiz.option_b, quiz.option_c, quiz.option_d]
+    quiz_option_a = quiz_options.pop(randbelow(len(quiz_options)))
+    quiz_option_b = quiz_options.pop(randbelow(len(quiz_options)))
+    quiz_option_c = quiz_options.pop(randbelow(len(quiz_options)))
+    quiz_option_d = quiz_options.pop()
+
+    # Considering shuffled order of options,
+    # remove marks((A), (B), etc) from each option label before sending to the front-end.
+    # Additionally, provide the original option values to fill values in the radio input form
+    # which will be used to validate the user's choice.
     return JsonResponse({
         "quiz": {
             "quiz_id": quiz.id,
             "question": quiz.question,
-            "option_a": quiz.option_a,
-            "option_b": quiz.option_b,
-            "option_c": quiz.option_c,
-            "option_d": quiz.option_d
+            "option_a": quiz_option_a[4:],
+            "option_b": quiz_option_b[4:],
+            "option_c": quiz_option_c[4:],
+            "option_d": quiz_option_d[4:],
+            "option_values": [quiz_option_a[1], quiz_option_b[1], quiz_option_c[1], quiz_option_d[1]]
         }
     }, status=200)
 
@@ -406,8 +418,9 @@ def generate_quiz():
         print("Validating the received quiz has failed. Rejecting...")
         return None
 
-    if len(items[5]) > 1:
-        items[5] = items[5][-1]
+    if items[5] not in ["A", "B", "C", "D"]:
+        print("Validating the answer data of the quiz has failed. Rejecting...")
+        return None
 
     new_quiz_id = save_quiz_data(data["movie_id"], items)
     if not new_quiz_id:
