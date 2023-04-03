@@ -28,10 +28,12 @@ The KinoQuizAI project was born out of this single idea. I wanted to explore the
 Back in February 2023, I wrote a blog post about ["Prompt Engineering"](https://seongjin.me/prompt-engineering-in-chatgpt/#chatgpt%EB%A1%9C-%EC%8B%9C%ED%97%98%ED%95%B4-%EB%B3%B8-%ED%94%84%EB%A1%AC%ED%94%84%ED%8A%B8-%EC%97%94%EC%A7%80%EB%8B%88%EC%96%B4%EB%A7%81-%EC%82%AC%EB%A1%80) where I presented an example of engineering prompts to generate a movie quiz. This project applies similar but more advanced technique to create a fun and interactive quiz app using ChatGPT.
 
 ## Lessons Learned
-### Maintaining consistency of the GPT-genarated data
+### Maintaining consistency of GPT-genarated data
 By using the ChatGPT API, the app can theoretically provide new movie quizzes that are never repeated. However, the main function of LLM like GPT is to predict the next text based on a given prompt. This means that **ChatGPT may not always produce the data in the desired format or topic**.
 
 To minimize this problem and to maintain the consistency and quality of the generated quiz data, my project implements several data-handling functions on the back-end: sending a well-designed prompt with fine-tuned parameters to the third-party API, receiving the real-time generated data, validating and preprocessing the data, saving it to DB, and adding a retry mechanism for cases where fetching the data fails.
+
+Through carefully crafted prompts, I was able to deliver quality movie quizzes and related content from ChatGPT in the desired format and topic every time. It was possible by implementing prompt engineering techniques like **"Instruction Prompting"** and **"Few-shot Prompting"** which are well explained in [this article of Lilian Weng, the Head of OpenAI's Applied AI Research.](https://lilianweng.github.io/posts/2023-03-15-prompt-engineering/)
 
 ### Implementing logic to reduce costs
 KinoQuizAI currently utilizes the `gpt-3.5-turbo` model, [which is a paid product of OpenAI at a rate of $0.002 per 1,000 tokens.](https://openai.com/pricing) Generally, between 1,000 and 1,500 tokens are needed for KinoQuizAI to exchange communication with the ChatGPT API and receive quiz data. In addition to the cost, the average response time of 5~15 seconds for exchanging data with the ChatGPT API also adversely affects the user experience.
@@ -40,6 +42,13 @@ To optimize the user experience and reduce the server costs, I have implemented 
 
 ### Using JS to create seamless user experience
 To ensure a seamless and dynamic interface for the quiz playing screen, I have used JavaScript to manipulate the document structure according to the responses from the back-end side. By using `fetch` API in JavaScript, this app can request and receive data asynchronously while the user is playing the quiz. If the data is successfully received, the quiz page will be updated dynamically without reloading. This enhances the usability and interactivity of the app.
+
+## Remaining Challenges
+### "Hallucinations" in GPT-genarated data
+Even with carefully engineered prompts, ChatGPT still may generate "hallucinations" or false information in the responses. This also affects the quality of the quiz content. Through my experiments during the development, I was able to reduce the chance of generating inaccurate quizzes to about one in ten with KinoQuizAI. However, I'm continuing to explore ways to reduce this frequency further.
+
+### Processing the response data
+This app is designed to receive quiz data in a specific format from ChatGPT. But occasionally, it may receive data that does not conform to this format. In those cases, the app will display an error message and a button for the user to request the quiz data again. While currently, this is the solution, I am actively exploring more subtle ways to address this issue.
 
 ## Screenshots
 
